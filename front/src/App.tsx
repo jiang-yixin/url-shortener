@@ -9,6 +9,7 @@ const App: React.FC = () => {
   const [longUrl, setLongUrl] = useState('');
   const [shortUrl, setShortUrl] = useState('');
   const [error, setError] = useState('');
+  const [isValidUrl, setValidUrl] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,6 +27,17 @@ const App: React.FC = () => {
     }
   };
 
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLongUrl(e.target.value);
+    try {
+      new URL(longUrl)
+    } catch (error) {
+      setValidUrl(false);
+      return;
+    }
+    setValidUrl(true);
+  }
+
   return (
     <div className="App">
       <h1>URL Shortener</h1>
@@ -34,11 +46,12 @@ const App: React.FC = () => {
           type="text"
           placeholder="Enter long URL"
           value={longUrl}
-          onChange={(e) => setLongUrl(e.target.value)}
+          onChange={onChange}
           required
         />
         <button type="submit">Shorten URL</button>
       </form>
+      {!isValidUrl && <p style={{ color: 'red' }}>Invalid URL</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {shortUrl && (
         <p>
